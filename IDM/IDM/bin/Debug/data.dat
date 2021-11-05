@@ -1,0 +1,67 @@
+<?xml version="1.0" standalone="yes"?>
+<MyDB xmlns="http://tempuri.org/MyDB.xsd">
+  <FILES>
+    <ID>1</ID>
+    <URL>https://dlcdn.apache.org/netbeans/netbeans/12.5/Apache-NetBeans-12.5-bin-windows-x64.exe</URL>
+    <FileName>Apache-NetBeans-12.5-bin-windows-x64.exe</FileName>
+    <FileSize>421385 KB</FileSize>
+    <DateTime>2021-11-05T15:22:40.5641008+07:00</DateTime>
+    <DownloadTime>00:01:28.3</DownloadTime>
+  </FILES>
+  <FILES>
+    <ID>2</ID>
+    <URL>https://dlcdn.apache.org/netbeans/netbeans/12.5/Apache-NetBeans-12.5-bin-windows-x64.exe</URL>
+    <FileName>Apache-NetBeans-12.5-bin-windows-x64.exe</FileName>
+    <FileSize>421385 KB</FileSize>
+    <DateTime>2021-11-05T15:38:26.469124+07:00</DateTime>
+    <DownloadTime>00:01:20.0</DownloadTime>
+  </FILES>
+  <FILES>
+    <ID>3</ID>
+    <URL>https://dlcdn.apache.org/netbeans/netbeans/12.5/Apache-NetBeans-12.5-bin-windows-x64.exe</URL>
+    <FileName>Apache-NetBeans-12.5-bin-windows-x64.exe</FileName>
+    <FileSize>421385 KB</FileSize>
+    <DateTime>2021-11-05T15:42:30.2368405+07:00</DateTime>
+    <DownloadTime>00:01:18.2</DownloadTime>
+  </FILES>
+  <FILES>
+    <ID>4</ID>
+    <URL>https://dlcdn.apache.org/netbeans/netbeans/12.5/Apache-NetBeans-12.5-bin-windows-x64.exe</URL>
+    <FileName>Apache-NetBeans-12.5-bin-windows-x64.exe</FileName>
+    <FileSize>421385 KB</FileSize>
+    <DateTime>2021-11-05T15:46:38.9030379+07:00</DateTime>
+    <DownloadTime>00:01:05.2</DownloadTime>
+  </FILES>
+  <FILES>
+    <ID>5</ID>
+    <URL>https://dlcdn.apache.org/netbeans/netbeans/12.5/Apache-NetBeans-12.5-bin-windows-x64.exe</URL>
+    <FileName>Apache-NetBeans-12.5-bin-windows-x64.exe</FileName>
+    <FileSize>421385 KB</FileSize>
+    <DateTime>2021-11-05T15:51:52.265896+07:00</DateTime>
+    <DownloadTime>00:01:32.1</DownloadTime>
+  </FILES>
+  <FILES>
+    <ID>6</ID>
+    <URL>https://dlcdn.apache.org/netbeans/netbeans/12.5/Apache-NetBeans-12.5-bin-windows-x64.exe</URL>
+    <FileName>Apache-NetBeans-12.5-bin-windows-x64.exe</FileName>
+    <FileSize>421385 KB</FileSize>
+    <DateTime>2021-11-05T15:54:08.9480921+07:00</DateTime>
+    <DownloadTime>00:01:32.1</DownloadTime>
+  </FILES>
+  <FILES>
+    <ID>7</ID>
+    <URL>https://dlcdn.apache.org/netbeans/netbeans/12.5/Apache-NetBeans-12.5-bin-windows-x64.exe</URL>
+    <FileName>Apache-NetBeans-12.5-bin-windows-x64.exe</FileName>
+    <FileSize>421385 KB</FileSize>
+    <DateTime>2021-11-05T15:59:54.433211+07:00</DateTime>
+    <DownloadTime>00:01:56.1</DownloadTime>
+  </FILES>
+  <FILES>
+    <ID>8</ID>
+    <URL>https://dlcdn.apache.org/netbeans/netbeans/12.5/Apache-NetBeans-12.5-bin-windows-x64.exe</URL>
+    <FileName>Apache-NetBeans-12.5-bin-windows-x64.exe</FileName>
+    <FileSize>421385 KB</FileSize>
+    <DateTime>2021-11-05T16:22:36.7425216+07:00</DateTime>
+    <DownloadTime>00:01:10.0</DownloadTime>
+  </FILES>
+</MyDB>
