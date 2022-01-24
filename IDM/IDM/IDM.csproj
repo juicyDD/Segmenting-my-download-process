@@ -52,6 +52,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Downloader\BlockInfo.cs" />
+    <Compile Include="Downloader\GoogleDriveDirectUrl.cs" />
     <Compile Include="Downloader\MyDownloader.cs" />
     <Compile Include="Downloader\ProcessState.cs" />
     <Compile Include="frmAddUrl.cs">

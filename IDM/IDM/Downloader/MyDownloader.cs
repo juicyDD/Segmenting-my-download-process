@@ -20,6 +20,7 @@ namespace IDM.Downloader
             token = source.Token;
         }
         private static MyDownloader _instance;
+        //private MyDownloader _instance;
         private HttpWebRequest request = null;
         IAsyncResult responseResult = null;
         private volatile HttpWebResponse response = null;
@@ -31,7 +32,9 @@ namespace IDM.Downloader
         private int state = 0;
         private string urlAddress;
         public List<SegmentInfo> segs = new List<SegmentInfo>();
+        private int segments;
         private ProcessState _downloadState;
+        private long[] fixedLengthsOfEachSegs=new long[100];
         public ProcessState DownloadState
         {
             get 
@@ -46,9 +49,10 @@ namespace IDM.Downloader
 
         public static MyDownloader GetInstance()
         {
-            if(_instance == null) {
+            /*if(_instance == null) {
                 _instance = new MyDownloader();
-            }
+            }*/
+            _instance = new MyDownloader();
             return _instance;
         }
         //public static readonly MyDownloader Instance;
@@ -84,6 +88,7 @@ namespace IDM.Downloader
         //Overload
         public async Task DownloadFile(string urlAddress, string filePath, int Segments)
         {
+            this.segments = Segments;
             this.bufferFilePath = new string[Segments];
             int i = 0;
             this.urlAddress = urlAddress;
@@ -110,17 +115,20 @@ namespace IDM.Downloader
             
             await Task.Run(() => this.BeginGettingTheLength(urlAddress));
             while (this.fileSize == -1) { } //ko await function asynccallback dc ulatr
-            msgdel(this.fileSize.ToString());
+            //msgdel(this.fileSize.ToString());
             //List<SegmentInfo> segs = SegmentInfo.nhiIsDividingAFile(this.fileSize, Segments);
             //msgdel(segs[0].EndByte.ToString());
             if (this.segs.Count ==0)
-            this.segs =  SegmentInfo.nhiIsDividingAFile(this.fileSize, Segments);
+            this.segs = await Task.Run(()=> SegmentInfo.nhiIsDividingAFile(this.fileSize, Segments));
+            
             string tt = "";
             for(int t = 0;t<Segments;t++)
             {
                 tt += segs[t].StartByte.ToString() + "-" + segs[t].EndByte.ToString() +"-"+segs[t].SegmentSize.ToString()+ "\n";
+                this.fixedLengthsOfEachSegs[t] =Convert.ToInt32(segs[t].SegmentSize);
             }
             this.msgdel(tt);
+            
             while (this.response == null)
             {
 
@@ -154,7 +162,9 @@ namespace IDM.Downloader
             this.fileStream.Close();
 
             bool myvar = await Task.Run(()=>this.nhiIsModifying());
+
             msgdel("XONG");
+
             //this.DownloadState = new ProcessState();
             this.DownloadState = ProcessState.Completed;
             
@@ -245,11 +255,15 @@ namespace IDM.Downloader
                     if(token.IsCancellationRequested)
                     {
                         os.Close();
+                        s.Close();
+                        os.Dispose();
+                        
+                        s.Dispose();
                         throw new OperationCanceledException(token);
                     }
                     os.Write(buff, 0, c);
                    
-                    os.Flush();
+                    os.Flush(true);
                     info.CurrentByte += Math.Min(4096, byteRemain);
                     byteRemain -= Math.Min(4096, byteRemain);
                 }
@@ -317,21 +331,26 @@ namespace IDM.Downloader
         public async Task ResumeDownload(string urlAddress, string filePath, int Segments)
         {
             this.source = new CancellationTokenSource();
-            this.token = source.Token;
+            this.token = this.source.Token;
+
             int count = this.segs.Count;
             this.state = 0;
             this.DownloadState = ProcessState.Downloading;
+            string ttt = "";
             foreach(SegmentInfo seg in this.segs)
             {
-                Boolean x = await this.ResetSegmentInfo(seg);
+                Boolean x = await Task.Run(()=>this.ResetSegmentInfo(seg));
+                //ttt += seg.CurrentByte.ToString() +"-"+ seg.SegmentSize.ToString()+"\n";
 
             }
+           //msgdel(ttt);
+
             string tt = "";
-            for (int t = 0; t < this.segs.Count; t++)
+            /*for (int t = 0; t < this.segs.Count; t++)
             {
                 tt += segs[t].StartByte.ToString() + "-" + segs[t].EndByte.ToString() + "-" + segs[t].SegmentSize.ToString() + "\n";
             }
-            msgdel(tt);
+            msgdel(tt);*/
             try
             {
                 var segmentingMyResume = segs.Select(s => Task.Factory.StartNew(() => _1SegmentResume(s))).ToArray();
@@ -352,11 +371,20 @@ namespace IDM.Downloader
                 x.CopyTo(fileStream);
                 x.Close();
             }
+            bool myvar = await Task.Run(() => this.nhiIsModifying());
+            msgdel("XONG");
+            this.DownloadState = ProcessState.Completed;
+            
             this.DeleteTemporaryFiles();
             this.fileStream.Close();
-            this.DownloadState = ProcessState.Completed;
+            string aa = "";
+            /*for(int t = 0;t<Segments;t++)
+            {
+                aa += segs[t].CurrentByte.ToString() + "\n";
+            }
+            msgdel(aa);*/
             //while (this.DownloadState != ProcessState.Completed) { }
-            msgdel("XONG");
+            
             
             
 
@@ -377,9 +405,9 @@ namespace IDM.Downloader
                 HttpWebRequest request = null;
                 HttpWebResponse response = null;
                 request = (HttpWebRequest)HttpWebRequest.Create(urlAddress);
-                request.AddRange(info.StartByte, info.EndByte);
-
-
+                //+Convert.ToInt32(this.fileSize / this.segments * info.SegmentIndex)
+                request.AddRange(info.StartByte, info.EndByte );
+                
                 request.Timeout = 30000;
                 response = (HttpWebResponse)request.GetResponse();
 
@@ -397,29 +425,34 @@ namespace IDM.Downloader
                          break;
                      }
                  }*/
-                filePath = this.bufferFilePath[info.SegmentIndex];
+            filePath = this.bufferFilePath[info.SegmentIndex];
                 FileStream os = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-                os.Seek(info.CurrentByte, SeekOrigin.Begin);
+                os.Flush(true);
+                await Task.Run(()=>os.Seek(info.CurrentByte, SeekOrigin.Begin));
                 this.SetMyTemporaryFilesInvisible(filePath);
                 byte[] buff = new byte[4096];
                 int c = 0;
                 int byteRemain = Convert.ToInt32(info.SegmentSize);
+                
                 while ((c = await s.ReadAsync(buff, 0, 4096)) > 0)
                 {
-                    os.Flush();
+                    os.Flush(true);
                     if (token.IsCancellationRequested)
                     {
                         os.Close();
+                        s.Close();
                         throw new OperationCanceledException(token);
                     }
                     os.Write(buff, 0, c);
 
                     
-                    info.CurrentByte += Math.Min(4096, byteRemain);
+                    //info.CurrentByte += Math.Min(4096, byteRemain);
+                    int tam = info.CurrentByte + Math.Min(4096, byteRemain);
+                    info.CurrentByte = tam;
                     byteRemain -= Math.Min(4096, byteRemain);
                 }
+                
                 os.Close();
-
                 s.Close();
 
             }
@@ -434,15 +467,19 @@ namespace IDM.Downloader
 
             }
         }
-
-        public async Task<Boolean> ResetSegmentInfo(SegmentInfo i)
+        //private long[] lengths;
+        public bool ResetSegmentInfo(SegmentInfo i)
         {
-            long len = new System.IO.FileInfo(this.bufferFilePath[i.SegmentIndex]).Length;
-            int start = Convert.ToInt32(len);
-            //i.StartByte = start + i.SegmentIndex * Convert.ToInt32(i.SegmentSize);
-            i.StartByte = i.EndByte - (Convert.ToInt32(i.SegmentSize) -1 - Convert.ToInt32(len));
-            i.SegmentSize = i.SegmentSize - len;
+            long len = 0;
             
+            len= new System.IO.FileInfo(this.bufferFilePath[i.SegmentIndex]).Length;
+           
+            while (len == 0) { }
+            int start = Convert.ToInt32(len);
+            i.SegmentSize = this.fixedLengthsOfEachSegs[i.SegmentIndex] - len;
+            i.StartByte = Convert.ToInt32(i.EndByte - i.SegmentSize + 1);
+           // msgdel(i.SegmentSize.ToString() + "//" + (i.EndByte-i.StartByte).ToString());
+
             i.CurrentByte = start;
             return true;
             

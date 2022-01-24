@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IDM.Downloader;
 
 namespace IDM
 {
@@ -22,6 +23,10 @@ namespace IDM
         private void btnOk_Click(object sender, EventArgs e)
         {
             this.Url = txtAddUrl.Text;
+            if (this.Url.ToString().Contains("drive.google"))
+            {
+                this.Url = GoogleDriveDirectUrl.GetGoogleDriveDownloadAddress(this.Url);
+            }
 
             
         }

@@ -25,12 +25,23 @@ namespace IDM
             {2, "2 segments" },
             {3, "3 segments" },
             {4, "4 segments" },
-            {5, "5 segments" }
+            {5, "5 segments" },
+            {6, "6 segments" },
+            {7, "7 segments" },
+            {8, "8 segments" },
+            {9, "9 segments" },
+            {10, "10 segments" },
+            {11, "11 segments" },
+            {12, "12 segments" },
+            {13, "13 segments" },
+            {14, "14 segments" },
+            {15, "15 segments" },
+            {25,"25 segments" }
         };
         public frmDownload(frmMain frm)
         {
             InitializeComponent();
-            this.tbAddress.Enabled = false;
+            //this.tbAddress.Enabled = false;
             btnStart.Enabled = true;
             btnStop.Enabled = false;
             btnPause.Enabled = false;
@@ -88,7 +99,9 @@ namespace IDM
             {
                 this.myGroup.NhiIsAssigningSegmentInfo(i.SegmentIndex, i);
                 this.myGroup.progressBars[i.SegmentIndex].Minimum = 0;
-                this.myGroup.progressBars[i.SegmentIndex].Maximum = Convert.ToInt32(i.SegmentSize);
+                int size = Convert.ToInt32(i.SegmentSize);
+                //this.myGroup.progressBars[i.SegmentIndex].Maximum = Convert.ToInt32(i.SegmentSize);
+                this.myGroup.progressBars[i.SegmentIndex].Maximum = size;
             }
             foreach (SegmentInfo i in this.myGroup.segments)
             {
